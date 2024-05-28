@@ -1,6 +1,8 @@
 import validator from "validator";
 import UserModel from "../models/userModel.js";
 import bcrypt from "bcrypt";
+import "dotenv/config"
+import getToken from "../Utils/generateToken.js"
 
 const saltRounds = 10;
 
@@ -53,26 +55,51 @@ const addUser = async (req, res) => {
   }
 };
 
-const loginUser = async(req,res)=>{
-  console.log(req.body);
-  const {password,email}=req.body
+const loginUser = async (req, res,next) => {
+
+  const { password, email } = req.body;
+
+  // Check if email and password are provided
+  if (!email || !password) {
+    return res.status(400).json({
+      success: false,
+      message: "Please provide email and password",
+    });
+  }
+
   try {
     const user = await UserModel.findOne({ email });
-    if (!user) { 
-        return res.json({ success: false, message: "User not found" });
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
     }
+
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-        return res.json({ success: false, message: "Invalid credentials" });
+      return res.status(401).json({ success: false, message: "Invalid credentials" });
     }
-    res.status(200).json({ success: true, message: "Login successfully",user });
-    
+
+    req.user = user
+
+    getToken(req,res,next)
+
+  
+
+    // res.status(200).json({ success: true, message: "Login successful", user });
   } catch (error) {
+    console.error(error); // Log error for debugging
     res.status(500).json({
       success: false,
       message: "Internal server error",
     });
   }
-}
+};
 
-export { addUser,loginUser };
+const updateUser =async(req,res)=>{
+       try {
+        
+       } catch (error) {
+        
+       }
+}
+export { addUser,loginUser,updateUser };
+
