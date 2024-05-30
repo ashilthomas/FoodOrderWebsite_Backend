@@ -84,7 +84,7 @@ const loginUser = async (req, res,next) => {
 
   
 
-    // res.status(200).json({ success: true, message: "Login successful", user });
+    
   } catch (error) {
     console.error(error); // Log error for debugging
     res.status(500).json({

@@ -7,8 +7,9 @@ const foodSchema = new Schema({
    category: { type: String, required: true },
    availability: { type: Boolean, default: true },
    image: { type: String, required: true },
+   localImagePath: { type: String, required: true },
    brand: { type: String, required: true },
-   restaurant: { type: mongoose.Schema.Types.ObjectId, ref: "Restaurant",  },
+   restaurant: { type: mongoose.Schema.Types.ObjectId, ref: "restaurents",  },
 });
 
 const MenuModel = mongoose.models.Menu || mongoose.model("Menu", foodSchema);
