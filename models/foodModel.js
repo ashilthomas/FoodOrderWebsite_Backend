@@ -10,8 +10,8 @@ const foodSchema = new Schema({
    localImagePath: { type: String, required: true },
    brand: { type: String, required: true },
    restaurant: { type: mongoose.Schema.Types.ObjectId, ref: "restaurents",  },
+   customization: { type: mongoose.Schema.Types.ObjectId, ref: "FoodCustomization",  },
 });
-
 const MenuModel = mongoose.models.Menu || mongoose.model("Menu", foodSchema);
 
 export default MenuModel;
