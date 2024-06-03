@@ -36,5 +36,25 @@ const addRestaurent = async(req,res)=>{
     }
 }
 
+const getAllRestaurants = async(req,res)=>{
+    try {
+        const restaurant = await RestaurentModel.find({})
+        if(!restaurant){
+            return res.json({
+                success:false,
+                message:"no Restaurant found"
 
-export {addRestaurent}
+            })
+        }
+        res.status(200).json(restaurant)
+    } catch (error) {
+        console.log(error);
+             res.json({
+            success:false,
+            message:"Internal server error"
+        })
+    }
+
+}
+
+export {addRestaurent,getAllRestaurants}

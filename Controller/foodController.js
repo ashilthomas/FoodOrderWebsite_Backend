@@ -134,21 +134,21 @@ const searchMenuItems = async (req, res) => {
   
   
     try {
-      // Constructing the aggregation pipeline
+     
       const pipeline = [
         {
-          $match: filter // Initial match with menu item fields
+          $match: filter
         },
         {
           $lookup: {
-            from: 'restaurents', // The name of the restaurant collection
-            localField: 'restaurant', // Field in the MenuModel
-            foreignField: '_id', // Field in the Restaurant model
-            as: 'restaurant' // Output array field
+            from: 'restaurents', 
+            localField: 'restaurant', 
+            foreignField: '_id', 
+            as: 'restaurant' 
           }
         },
         {
-          $unwind: '$restaurant' // Deconstruct array to object
+          $unwind: '$restaurant' 
         }
       ];
  
@@ -156,10 +156,10 @@ const searchMenuItems = async (req, res) => {
       let restaurantMatch = {};
     
       if (restaurant) {
-        restaurantMatch['restaurant.title'] = { $regex: restaurant, $options: 'i' }; // Case-insensitive regex search for restaurant name
+        restaurantMatch['restaurant.title'] = { $regex: restaurant, $options: 'i' }; 
       }
       if (cuisinetype) {
-        restaurantMatch['restaurant.cuisinetype'] = { $regex: cuisinetype, $options: 'i' }; // Case-insensitive regex search for cuisine type
+        restaurantMatch['restaurant.cuisinetype'] = { $regex: cuisinetype, $options: 'i' };
       }
   
 
@@ -177,11 +177,11 @@ const searchMenuItems = async (req, res) => {
         });
       }
   
-      console.log("Results: ", results);
+     
       res.status(200).json(results);
     } catch (error) {
       console.log("Error: ", error);
-      res.status(500).json({ error: "An error occurred while fetching the data." });
+      res.status(500).json({ error: "Internal server error" });
     }
   };
   
