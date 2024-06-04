@@ -6,6 +6,7 @@ import "dotenv/config";
 import foodRoute from "./Routes/foodRoutes.js";
 import restaurentRoute from "./Routes/restaurenRoutes.js";
 import coustomizationRoute from "./Routes/coustomizationRoute.js";
+import orderRoute from "./Routes/orderRoute.js";
 
 const app = express();
 app.use(cookieParser())
@@ -17,6 +18,7 @@ app.use("/api/v1/user", userRoute);
 app.use("/api/v1/menus", foodRoute);
 app.use("/api/v1/restaurent", restaurentRoute);
 app.use("/api/v1/foodcoustom", coustomizationRoute);
+app.use("/api/v1/order", orderRoute);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

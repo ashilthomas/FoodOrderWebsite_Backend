@@ -1,7 +1,6 @@
-import { log } from "console";
+
 import { cloudinaryInstance } from "../Config/cloudinary.js";
 import MenuModel from "../models/foodModel.js";
-import RestaurentModel from "../models/restaurantModel.js";
 import fs from "fs";
 
 const addFoodMenuItems = async (req, res) => {
@@ -84,8 +83,8 @@ const deletMenuItems = async (req, res) => {
       });
     }
 
-    // Delete the file from the server using the local file path
-    const localFilePath = menu.localImagePath; // Use the stored local file path
+    
+    const localFilePath = menu.localImagePath; 
     if (localFilePath) {
       fs.unlink(localFilePath, async (err) => {
         if (err) {
@@ -94,7 +93,6 @@ const deletMenuItems = async (req, res) => {
           console.log("File deleted successfully");
         }
 
-        // Delete the menu item from the database
         await MenuModel.findByIdAndDelete(id);
         res.status(200).json({
           success: true,
@@ -102,7 +100,7 @@ const deletMenuItems = async (req, res) => {
         });
       });
     } else {
-      // If there is no local file path, just delete the menu item
+   
       await MenuModel.findByIdAndDelete(id);
       res.status(200).json({
         success: true,
@@ -123,7 +121,7 @@ const searchMenuItems = async (req, res) => {
     let filter = {};
   
     if (title) {
-      filter.title = { $regex: title, $options: "i" }; // Case-insensitive regex search
+      filter.title = { $regex: title, $options: "i" };
     }
     if (category) {
       filter.category = { $regex: category, $options: "i" };
@@ -186,7 +184,23 @@ const searchMenuItems = async (req, res) => {
   };
   
  
-  
+  const menuItemCategory = async(req,res)=>{
+    try {
+        const allMenuItems = await ProductModel.find({});
+    
+     
+        const categories = Array.from(new Set(allMenuItems.map(items => items.category)));
+    
+        if (categories.length === 0) {
+          return res.status(404).json({ success: false, message: "No categories available" });
+        }
+    
+        res.status(200).json({ success: true, categories });
+    } catch (error) {
+        console.log(error);
+        res.json("internal server error")
+    }
+  }
 
 
 export {
@@ -194,4 +208,5 @@ export {
   getallFoodMenuItems,
   deletMenuItems,
   searchMenuItems,
+  menuItemCategory
 };

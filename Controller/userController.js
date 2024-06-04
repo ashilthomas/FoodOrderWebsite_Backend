@@ -101,5 +101,7 @@ const updateUser =async(req,res)=>{
         
        }
 }
+
+
 export { addUser,loginUser,updateUser };
 
