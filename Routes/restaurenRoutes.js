@@ -4,6 +4,6 @@ import authenticateAdmin from "../middleware/adminAuth.js"
 const restaurentRoute = express.Router()
 
 restaurentRoute.post("/addrestaurant",addRestaurent)
-restaurentRoute.get("/allrestaurant",authenticateAdmin,getAllRestaurants)
+restaurentRoute.get("/allrestaurant",getAllRestaurants)
 
 export default restaurentRoute

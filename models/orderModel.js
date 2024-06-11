@@ -6,6 +6,12 @@ const orderItemSchema = new Schema({
 });
 
 const orderSchema = new Schema({
+    address:{type:Object},
+    deliveryStatus:{
+        type: String,
+        enum: ["pending", "deliverd","canceled"],
+        default: "shipped",
+    },
     user: { type: mongoose.Schema.Types.ObjectId, ref: "user", required: true },
     orderItem: [orderItemSchema]
 });

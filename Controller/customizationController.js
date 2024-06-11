@@ -23,5 +23,26 @@ const addFoodCustomization = async (req, res) => {
     console.log(error);
   }
 };
+const getAllFoodCustomization = async(req,res)=>{
+  try {
+    const foodCustomization = await FoodCustomizationModel.find({})
 
-export default addFoodCustomization;
+    if(!foodCustomization){
+      return res.json({
+        success:false,
+        message:"no Customization available"
+      })
+    }
+    res.status(200).json({
+      success:true,
+      foodCustomization
+    })
+  } catch (error) {
+    
+  }
+}
+export {
+  addFoodCustomization,
+  getAllFoodCustomization
+
+} ;

@@ -19,7 +19,7 @@ const addFoodMenuItems = async (req, res) => {
       }
 
       const imageUrl = result.url;
-      const { title, description, price, category, brand, restaurantId } =
+      const { title, description, price, category, brand, restaurantId,availability } =
         req.body;
 
       const newMenus = new MenuModel({
@@ -27,7 +27,7 @@ const addFoodMenuItems = async (req, res) => {
         description: description,
         price: price,
         category: category,
-        // availability: availability,
+        availability: availability,
         localImagePath: req.file.path,
         image: imageUrl,
         brand: brand,
@@ -36,9 +36,17 @@ const addFoodMenuItems = async (req, res) => {
 
       const menus = await newMenus.save();
       if (!menus) {
-        return res.send("menus is not created");
+        return res.send({
+          success:false,
+          message:"menus is not created",
+          
+        });
       }
-      return res.json(menus);
+      res.status(200).json({
+        success:true,
+        message:"food item added",
+        menus
+      })
     });
   } catch (error) {
     res.status(400).json({
@@ -202,11 +210,27 @@ const searchMenuItems = async (req, res) => {
     }
   }
 
-
+  const itemFilter = async (req, res) => {
+    try {
+      const menuItems = await MenuModel.find({
+        "price": { $lte: req.query.price }
+      });
+  
+      if (menuItems.length == 0) {
+        return res.json("error");
+      }
+  
+      res.json(menuItems);
+    } catch (error) {
+      res.json(error);
+    }
+  };
+  
 export {
   addFoodMenuItems,
   getallFoodMenuItems,
   deletMenuItems,
   searchMenuItems,
-  menuItemCategory
+  menuItemCategory,
+  itemFilter
 };

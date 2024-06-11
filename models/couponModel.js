@@ -8,7 +8,8 @@ const couponSchema = new mongoose.Schema({
   isActive: { type: Boolean, default: true }
 });
 
-const CouponModel = mongoose.model('Coupon', couponSchema);
+const CouponModel =    mongoose.model.coupon ||  mongoose.model('coupon', couponSchema);
+
 export default CouponModel
 
 
