@@ -2,6 +2,7 @@ import FoodCustomizationModel from "../models/customizationModel.js";
 
 const addFoodCustomization = async (req, res) => {
   const { sizeOptions, sauceOptions } = req.body;
+  console.log(req.body);
   try {
     const newCustomization = new FoodCustomizationModel({
       sizeOptions,

@@ -1,19 +1,37 @@
 import mongoose, { Schema } from "mongoose";
 
 const orderItemSchema = new Schema({
-    foodItem: { type: mongoose.Schema.Types.ObjectId, ref: "Menu", required: true },
-    quantity: { type: Number, required: true }
+    cart: { type: mongoose.Schema.Types.ObjectId, ref: "Cart",  },
+  
+
+   
 });
 
 const orderSchema = new Schema({
     address:{type:Object},
     deliveryStatus:{
         type: String,
-        enum: ["pending", "deliverd","canceled"],
+        enum: ["pending", "deliverd","canceled","shipped"],
         default: "shipped",
     },
     user: { type: mongoose.Schema.Types.ObjectId, ref: "user", required: true },
-    orderItem: [orderItemSchema]
+    orderItems: [orderItemSchema],
+    razorpay_order_id: {
+        type: String,
+        required: true,
+      },
+      razorpay_payment_id: {
+        type: String,
+        required: true,
+      },
+      razorpay_signature: {
+        type: String,
+        required: true,
+      },
+      date: {
+        type: Date,
+        default: Date.now,
+      },
 });
 
 const OrderModel = mongoose.models.orders || mongoose.model("orders", orderSchema);

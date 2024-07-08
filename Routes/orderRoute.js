@@ -1,9 +1,14 @@
 import express from "express"
-import { placeOrder } from "../Controller/orderController.js"
-import { coupanValidate, coupon } from "../Controller/couponController.js"
+import { allOrderItems, deleteOrder, placeOrder, verifyOrder } from "../Controller/orderController.js"
+import userAuth from "../middleware/userAuth.js"
+
 const orderRoute = express.Router()
 
-orderRoute.post("/placeorder",placeOrder)
-orderRoute.post("/validatecoupon",coupanValidate)
-orderRoute.post("/coupon",coupon)
+orderRoute.post("/placeorder",userAuth,placeOrder)
+orderRoute.post("/verifyorder",userAuth,verifyOrder)
+orderRoute.get("/allorderitems",userAuth,allOrderItems)
+orderRoute.post("/deleteorder",deleteOrder)
+
+// orderRoute.post("/validatecoupon",coupanValidate)
+// orderRoute.post("/coupon",coupon)
 export default orderRoute

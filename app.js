@@ -9,6 +9,7 @@ import restaurentRoute from "./Routes/restaurenRoutes.js";
 import coustomizationRoute from "./Routes/coustomizationRoute.js";
 import orderRoute from "./Routes/orderRoute.js";
 import couponRoute from "./Routes/couponRoute.js";
+import cartRoute from "./Routes/CartRoute.js";
 
 const app = express();
 app.use(cookieParser())
@@ -28,6 +29,7 @@ app.use("/api/v1/restaurent", restaurentRoute);
 app.use("/api/v1/foodcoustom", coustomizationRoute);
 app.use("/api/v1/order", orderRoute);
 app.use("/api/v1/coupon",couponRoute)
+app.use("/api/v1/cart",cartRoute)
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

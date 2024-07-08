@@ -6,7 +6,7 @@ import getToken from "../Utils/generateToken.js"
 
 const saltRounds = 10;
 
-const addUser = async (req, res) => {
+const addUser = async (req, res,next) => {
 
   const { name, email, password } = req.body;
 
@@ -40,7 +40,10 @@ const addUser = async (req, res) => {
     });
 
     const user = await newUser.save();
+    req.user = user
+    
 
+    getToken(req,res,next)
     res.status(200).json({
       success: true,
       message: "Successfully created account",
@@ -79,6 +82,7 @@ const loginUser = async (req, res,next) => {
     }
 
     req.user = user
+    
 
     getToken(req,res,next)
 
@@ -94,14 +98,47 @@ const loginUser = async (req, res,next) => {
   }
 };
 
-const updateUser =async(req,res)=>{
+const admin =async(req,res)=>{
+  const adminId = req.user.id
        try {
-        
+      
+
+        const isadmin = await UserModel.findOne({_id:adminId})
+
+        if(!isadmin){
+          return res.json({ message: "authentication failed", success: false });
+        }
+        res.json(({
+          success:true,
+          message:"Athenticate admin"
+        }))
        } catch (error) {
-        
+        console.log(error);
+        res.json({ message: "authentication failed", success: false })
        }
 }
 
 
-export { addUser,loginUser,updateUser };
+const checkuser = async(req,res)=>{
+ 
+  const userId = req.user.id
+  console.log(userId);
+
+
+  try {
+    const user = await UserModel.findOne({_id:userId})
+    if(!user){
+      return res.json({ message: "authentication failed", success: false });
+    }
+    res.json(({
+      success:true,
+    
+    }))
+   } catch (error) {
+    console.log(error);
+    res.json({ message: "authentication failed", success: false })
+   }
+}
+
+export { addUser,loginUser,admin,checkuser };
 

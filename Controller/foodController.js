@@ -1,9 +1,11 @@
 
+import { log } from "console";
 import { cloudinaryInstance } from "../Config/cloudinary.js";
 import MenuModel from "../models/foodModel.js";
 import fs from "fs";
 
 const addFoodMenuItems = async (req, res) => {
+ 
   try {
     if (!req.file) {
       return res.send("file is not visible");
@@ -19,8 +21,11 @@ const addFoodMenuItems = async (req, res) => {
       }
 
       const imageUrl = result.url;
-      const { title, description, price, category, brand, restaurantId,availability } =
+      const { title, description, price, category, brand, restaurant, availability,customization} =
         req.body;
+       
+   
+
 
       const newMenus = new MenuModel({
         title: title,
@@ -31,7 +36,8 @@ const addFoodMenuItems = async (req, res) => {
         localImagePath: req.file.path,
         image: imageUrl,
         brand: brand,
-        restaurant: restaurantId,
+        restaurant: restaurant,
+        customization:customization
       });
 
       const menus = await newMenus.save();
@@ -70,6 +76,7 @@ const getallFoodMenuItems = async (req, res) => {
     res.status(200).json({
       success: true,
       allMenus,
+
     });
   } catch (error) {
     console.log(error);
@@ -123,74 +130,37 @@ const deletMenuItems = async (req, res) => {
     });
   }
 };
-const searchMenuItems = async (req, res) => {
-    const { title, category, brand, restaurant, cuisinetype } = req.query;
-  
-    let filter = {};
-  
-    if (title) {
-      filter.title = { $regex: title, $options: "i" };
-    }
-    if (category) {
-      filter.category = { $regex: category, $options: "i" };
-    }
-    if (brand) {
-      filter.brand = { $regex: brand, $options: "i" };
-    }
-  
-  
-    try {
-     
-      const pipeline = [
-        {
-          $match: filter
-        },
-        {
-          $lookup: {
-            from: 'restaurents', 
-            localField: 'restaurant', 
-            foreignField: '_id', 
-            as: 'restaurant' 
-          }
-        },
-        {
-          $unwind: '$restaurant' 
-        }
-      ];
- 
-  
-      let restaurantMatch = {};
-    
-      if (restaurant) {
-        restaurantMatch['restaurant.title'] = { $regex: restaurant, $options: 'i' }; 
-      }
-      if (cuisinetype) {
-        restaurantMatch['restaurant.cuisinetype'] = { $regex: cuisinetype, $options: 'i' };
-      }
-  
 
-      if (Object.keys(restaurantMatch).length > 0) {
-        pipeline.push({ $match: restaurantMatch });
-      }
-  
-  
-      const results = await MenuModel.aggregate(pipeline);
-  
-      if (results.length === 0) {
-        return res.json({
-          success: false,
-          message: "Item not found"
-        });
-      }
-  
-     
-      res.status(200).json(results);
-    } catch (error) {
-      console.log("Error: ", error);
-      res.status(500).json({ error: "Internal server error" });
+const searchMenuItems = async (req, res) => {
+  const { query: searchTerm } = req.query;
+
+  try {
+    const results = await MenuModel.find({
+      $or: [
+        { title: { $regex: new RegExp(searchTerm, 'i') } },
+        { category: { $regex: new RegExp(searchTerm, 'i') } },
+        { brand: { $regex: new RegExp(searchTerm, 'i') } },
+        
+      ]
+    }).populate('restaurant');
+
+    if (results.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'No items found'
+      });
     }
-  };
-  
+
+    res.status(200).json(results);
+  } catch (error) {
+    console.error('Error fetching menu items:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+
+
+
  
   const menuItemCategory = async(req,res)=>{
     try {
@@ -212,19 +182,144 @@ const searchMenuItems = async (req, res) => {
 
   const itemFilter = async (req, res) => {
     try {
-      const menuItems = await MenuModel.find({
-        "price": { $lte: req.query.price }
-      });
+      const { price, sort, cuisinetype } = req.query;
   
-      if (menuItems.length == 0) {
-        return res.json("error");
+      // Build the query object
+      let query = {};
+     
+      if (price) {
+        query.price = { $lte: price };
+      }
+      if(cuisinetype){
+          
+      }
+    
+      let menuItems = await MenuModel.find(query).populate('restaurant');
+  
+     
+      if (menuItems.length === 0) {
+        return res.json({ error: "No items found" });
+      }
+      if (cuisinetype) {
+        menuItems = menuItems.filter(item => item.restaurant.cuisinetype === cuisinetype);
       }
   
+      // Optionally filter by rating if provided
+  
+      // Sort the items if sort parameter is provided
+      if (sort === 'rating') {
+        menuItems = menuItems.sort((a, b) => b.restaurant.rating - a.restaurant.rating);
+      } else if (sort === 'price') {
+        menuItems = menuItems.sort((a, b) => a.price - b.price);
+      }
+     
+  
+      // Return the filtered and possibly sorted items
       res.json(menuItems);
     } catch (error) {
-      res.json(error);
+      // Return the error message
+      res.status(500).json({ error: error.message });
     }
   };
+  
+  const pagination = async (req, res) => {
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 10;
+    const skip = (page - 1) * limit;
+  
+    try {
+      let query = MenuModel.find({});
+      query = query.skip(skip).limit(limit);
+  
+      const items = await query;
+      res.json(items);
+    } catch (error) {
+      res.status(500).json({ message: "Server Error", error: error.message });
+    }
+  };
+  const getCategoryItems = async (req, res) => {
+    const { category } = req.body;
+    console.log(category);
+  
+    try {
+      const items = await MenuModel.find({ category: category }).populate("restaurant")
+      if(items.length==0){
+        return res.json({
+          success:false,
+          message:"no category items found"
+        })
+      }
+      res.status(200).json({
+        success:true,
+        items
+      });
+    } catch (error) {
+      res.status(500).json({
+        success:false,
+        message:"An error occurred while fetching the category items"
+      });
+    }
+  };
+  const restaurantItems = async(req,res)=>{
+    const {id}=req.body
+   
+    
+       try {
+
+      // const restaurantItem = await MenuModel.find().
+      //   populate({ path: 'restaurant', select:id }).populate("restaurant")
+
+      const restaurantItem = await MenuModel.find({
+        restaurant:id}).populate("restaurant")
+
+        if(restaurantItem.length == 0){
+          return res.json({
+            success:true,
+            message:"no restaurant found"
+          })
+        }
+
+
+        res.json({
+          success:true,
+          restaurantItem
+        })
+        
+       } catch (error) {
+        console.log(error);
+        res.status(404).json({
+          success:false,
+          message:"internal server error"
+        })
+       }
+  }
+
+  const singleMenuItems = async(req,res)=>{
+    const {id}=req.body
+    console.log("single",id);
+    try {   
+      
+      const menuItem = await MenuModel.findOne({_id:id}).populate("customization")
+      if(!menuItem){
+        return res.json({
+          succes:false,
+          message:"no items found"
+        })
+      }
+      res.json({
+        success:true,
+        menuItem
+      })
+     
+    } catch (error) {
+      res.json({
+        succes:false,
+        message:"Internal server error"
+      })
+      console.log(error);
+      
+    }
+  }
   
 export {
   addFoodMenuItems,
@@ -232,5 +327,9 @@ export {
   deletMenuItems,
   searchMenuItems,
   menuItemCategory,
-  itemFilter
+  itemFilter,
+  pagination,
+  getCategoryItems,
+  restaurantItems,
+  singleMenuItems
 };

@@ -2,11 +2,14 @@ import CouponModel from "../models/couponModel.js";
 
 
 const createCoupon = async(req,res)=>{
-    const { code, discount, expirationDate, isActive } = req.body;
-    console.log(req.body);
+    const { code, discount, expirationDate, isActive,title,desc } = req.body;
+
+  
    
     try {
         const newCoupon =  await new CouponModel({
+            title:title,
+            desc:desc,
             code:code,
             discount:discount,
             expirationDate:expirationDate,
@@ -63,16 +66,29 @@ const coupon = async(req,res)=>{
 }
 
 const coupanValidate = async(req,res)=>{
-    const { code } = req.body;
+    const { data } = req.body;
+   const code =data.coupon
+   
     try {
-        const coupon = await CouponModel.findOne({ code, isActive: true });
+        const coupon = await CouponModel.findOne({code:code });
+        console.log(coupon);
         if (!coupon){
-            return res.status(400).send('Invalid coupon code');
+            return res.send({
+                success:false,
+                message:"'Invalid coupon code'"
+            });
         }
         if (new Date(coupon.expirationDate) < new Date()) {
-            return res.status(400).send('Coupon has expired');
+            return res.json({
+                success:false,
+                message:"Coupon has expired"
+            })
         }
-        res.status(200).json(coupon)
+        res.status(200).json({
+            success:true,
+            message:"coupon added",
+            coupon
+        })
     } catch (error) {
         console.log(error);
         res.status(404).json({

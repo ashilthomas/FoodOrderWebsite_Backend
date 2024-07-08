@@ -1,16 +1,36 @@
+import { cloudinaryInstance } from "../Config/cloudinary.js";
 import RestaurentModel from "../models/restaurantModel.js"
 
 
 const addRestaurent = async(req,res)=>{
-    const {title,address,cuisinetype,rating,openinghours, location}=req.body
+
+
     try {
+        if (!req.file) {
+            return res.send("file is not visible");
+          }
+
+      
+    cloudinaryInstance.uploader.upload(req.file.path, async (err, result) => {
+        if (err) {
+            console.log(err, "error");
+            return res.status(500).json({
+              success: false,
+              message: "Error",
+            });
+          }
+    
+          const {title,cuisinetype,rating,openinghours, location}=req.body
+
+          const imageUrl = result.url;
+
         const NewRestaurant = await new RestaurentModel({
             title,
-            address,
             cuisinetype,
             rating,
             openinghours,
-            location
+            location,
+            restaurantimg:imageUrl
         })
         const restaurent = await NewRestaurant.save()
 
@@ -26,6 +46,7 @@ const addRestaurent = async(req,res)=>{
             message:"successfully created resturent",
             restaurent
         })
+    })
 
     } catch (error) {
         console.log(error);
@@ -56,5 +77,31 @@ const getAllRestaurants = async(req,res)=>{
     }
 
 }
+const singleRestaurant = async(req,res)=>{
+    const {id}=req.body
+    console.log(id);
+    try {
 
-export {addRestaurent,getAllRestaurants}
+        const restaurant = await RestaurentModel.findOne({_id:id})
+
+        if(restaurant.length == 0){
+            res.json({
+                success:false,
+                message:"no restaurant found"
+            })
+        }
+        res.json({
+            success:true,
+            restaurant
+        })
+        
+    } catch (error) {
+        res.status(404).json({
+            success:false,
+            message:"internal sever error"
+        })
+        
+    }
+}
+
+export {addRestaurent,getAllRestaurants,singleRestaurant}
