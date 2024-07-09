@@ -25,7 +25,9 @@ const getToken = (req, res, next) => {
         const token = jwt.sign(options, process.env.SKT, { expiresIn: "30m" });
 
         res.status(200)
-            .cookie("token", token)
+            .cookie("token", token,{   httpOnly: true,
+
+                sameSite: 'None',})
             .json({
                 success: true,
                 user: req.user,

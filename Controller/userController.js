@@ -59,6 +59,7 @@ const addUser = async (req, res,next) => {
 };
 
 const loginUser = async (req, res,next) => {
+  console.log("hitting login");
 
   const { password, email } = req.body;
 
@@ -101,7 +102,7 @@ const loginUser = async (req, res,next) => {
 const admin =async(req,res)=>{
   const adminId = req.user.id
        try {
-      
+     
 
         const isadmin = await UserModel.findOne({_id:adminId})
 
