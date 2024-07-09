@@ -71,38 +71,22 @@ const verifyOrder = async (req, res) => {
       });
     }
 
+    
     var mailOptions = {
       from: process.env.EMAIL_USER,
       to: email.email,
       subject: "conform order",
       text: `Dear Customer,
 
-Thank you for your order from [Restaurant Name]! We are delighted to prepare your delicious meal. Here are the details of your order:
+Thank you for your order We are delighted to prepare your delicious meal. 
 
 Order Number: ${razorpay_order_id}
 Order Date: ${new Date().toLocaleDateString()}
 
-  
+    
+`}
 
-Total Amount: 
-
-Delivery Address: [Customer Address]
-
-Estimated Delivery Time: [Delivery Time]
-
-Special Instructions: [Special Instructions]
-
-If you need to make any changes to your order or have any questions, please contact us at [Restaurant Phone Number] or reply to this email.
-
-We hope you enjoy your meal and thank you for choosing [Restaurant Name]!
-
-Best regards,
-
-[Restaurant Name] Team
-[Restaurant Website]
-[Restaurant Address]
-[Restaurant Phone Number]`,
-    };
+   
 
     transporter.sendMail(mailOptions, function (error, info) {
       if (error) {
@@ -129,8 +113,8 @@ const allOrderItems = async (req, res) => {
     const orderItems = await OrderModel.find({ user: userId }).populate({
       path: "orderItems.cart",
       populate: {
-        path: "items.productId", // Populate productId within items
-        model: "menu", // Make sure this is the correct model name
+        path: "items.productId", 
+        model: "menu", 
       },
     });
 
@@ -144,13 +128,13 @@ const deleteOrder = async (req, res) => {
 
 
   try {
-    // Find the order by ID
+   
     const order = await OrderModel.findById(orderId);
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
 
-    // Find the cart associated with the order items
+  
     const cartId = order.orderItems[0]?.cart;
 
     const cart = await CartModel.findById(cartId);
@@ -160,12 +144,12 @@ const deleteOrder = async (req, res) => {
         .json({ success: false, message: "Cart not found" });
     }
 
-    // Remove the specific product from the cart items
+ 
     cart.items = cart.items.filter(
       (item) => item.productId.toString() !== productId
     );
 
-    // Update the total price and total count
+    
     cart.totalPrice = cart.items.reduce((total, item) => total + item.price, 0);
     cart.totalCount = cart.items.length;
 
@@ -182,8 +166,5 @@ const deleteOrder = async (req, res) => {
   }
 };
 
-// const conformOrder = async(req,res)=>{
-
-// }
 
 export { placeOrder, verifyOrder, allOrderItems, deleteOrder };
