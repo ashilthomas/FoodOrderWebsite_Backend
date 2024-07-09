@@ -7,13 +7,13 @@ function authenticateUser(req, res, next) {
 
   console.log("token",token);
  
-  if (!token) {
-    return res.sendStatus(401); 
-    // return res.status(401).json({
-    //   succes:false,
-    //   message:"Unauthorized"
-    // })
-  }
+  // if (!token) {
+  //   return res.sendStatus(401); 
+  //   // return res.status(401).json({
+  //   //   succes:false,
+  //   //   message:"Unauthorized"
+  //   // })
+  // }
   jwt.verify(token, process.env.SKT, (err, user) => {
     
 
