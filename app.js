@@ -18,7 +18,7 @@ app.use(express.json());
 app.use(
   cors({
     credentials: true,
-    origin: true,
+    origin: 'https://food-order-website-frontend-1v3owxk2e-ashilthomas-projects.vercel.app/', // Replace with your
   })
 );
 
