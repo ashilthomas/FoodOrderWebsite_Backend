@@ -9,7 +9,7 @@ import restaurentRoute from "./Routes/restaurenRoutes.js";
 import coustomizationRoute from "./Routes/coustomizationRoute.js";
 import orderRoute from "./Routes/orderRoute.js";
 import couponRoute from "./Routes/couponRoute.js";
-import cartRoute from "./Routes/CartRoute.js";
+import cartRoute from "./Routes/cartRoute.js";
 
 const app = express();
 app.use(cookieParser())
