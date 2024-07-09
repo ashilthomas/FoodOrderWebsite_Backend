@@ -4,13 +4,15 @@ import "dotenv/config";
 function authenticateUser(req, res, next) {
 
   const token = req.cookies.token;
+
+  console.log("token",token);
  
   if (!token) {
-    // return res.sendStatus(401); 
-    return res.status(401).json({
-      succes:false,
-      message:"Unauthorized"
-    })
+    return res.sendStatus(401); 
+    // return res.status(401).json({
+    //   succes:false,
+    //   message:"Unauthorized"
+    // })
   }
   jwt.verify(token, process.env.SKT, (err, user) => {
     
