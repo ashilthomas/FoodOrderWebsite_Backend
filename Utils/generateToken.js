@@ -26,9 +26,7 @@ const getToken = (req, res, next) => {
 
         res.status(200)
             .cookie("token", token,{
-                httpOnly: false,
-                
-                sameSite: 'none',
+             
             })
             .json({
                 success: true,

@@ -2,10 +2,11 @@ import jwt from "jsonwebtoken";
 import "dotenv/config";
 
 function authenticateUser(req, res, next) {
+  console.log("token",token);
 
   const token = req.cookies.token;
 
-  console.log("token",token);
+  
  
  
   if (!token) {
@@ -16,7 +17,7 @@ function authenticateUser(req, res, next) {
     // })
   }
   console.log("JWT Secret", process.env.SKT);
-  
+
   jwt.verify(token, process.env.SKT, (err, user) => {
     
 

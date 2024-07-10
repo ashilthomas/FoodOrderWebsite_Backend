@@ -1,78 +1,7 @@
 import CartModel from "../models/cartModel.js";
 import MenuModel from "../models/foodModel.js";
-// avoid cart response custamiation and unwanted items before show all items
 
-// const addToCart = async (req, res) => {
-//   const { productId, quantity, customization } = req.body;
 
-//   const userId = "666feb23662d6ee9a87f7664";
-
-//   try {
-//     // Find the cart for the user
-//     let cart = await CartModel.findOne({ userId });
-
-//     const getProductBasePrice = async (productId) => {
-//       const product = await MenuModel.findOne({ _id: productId });
-//       console.log("Product:", product);
-//       return product ? product.price : 0;
-//     };
-
-//     const itemBasePrice = await getProductBasePrice(productId);
-
-//     const customizationTotalPrice =
-//       customization?.reduce((acc, option) => acc + option.price, 0) || 0;
-//     const itemTotalPrice = (itemBasePrice + customizationTotalPrice) * quantity;
-
-//     if (cart) {
-//       // Cart exists, check if the item is already in the cart
-//       const itemIndex = cart.items.findIndex(
-//         (item) => item.productId.toString() === productId
-//       );
-
-//       if (itemIndex > -1) {
-//         // Item exists in the cart, update its quantity and customization
-//         let productItem = cart.items[itemIndex];
-//         productItem.quantity += quantity;
-//         productItem.customization = customization;
-//         productItem.price = itemTotalPrice;
-//         cart.items[itemIndex] = productItem;
-//       } else {
-//         // Item does not exist in the cart, add it
-//         cart.items.push({
-//           productId,
-//           quantity,
-//           customization,
-//           price: itemTotalPrice,
-//         });
-//       }
-
-//       cart.totalPrice += itemTotalPrice;
-//       cart.totalItemCount = cart.items.length;
-//       cart = await cart.save();
-//       return res.status(201).json({ success: true, message: "updated", cart });
-//     } else {
-//       // No cart for the user, create a new cart
-//       const newCart = await CartModel.create({
-//         userId,
-//         items: [{ productId, quantity, customization, price: itemTotalPrice }],
-//         totalPrice: itemTotalPrice,
-//         totalItemCount: 1
-//       });
-
-//       res.status(201).json({
-//         success: true,
-//         message: "Added to cart",
-//         newCart,
-//       });
-//     }
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({
-//       success: false,
-//       message: "internal server error",
-//     });
-//   }
-// };
 const addToCart = async (req, res) => {
   const { productId, quantity, customization } = req.body;
  
