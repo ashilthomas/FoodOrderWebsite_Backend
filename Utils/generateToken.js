@@ -26,9 +26,9 @@ const getToken = (req, res, next) => {
 
         res.status(200)
             .cookie("token", token,{
-                httpOnly: true,
-                secure: process.env.NODE_ENV === 'production', // Set to true in production
-                sameSite: 'strict',
+                httpOnly: false,
+                
+                sameSite: 'none',
             })
             .json({
                 success: true,
