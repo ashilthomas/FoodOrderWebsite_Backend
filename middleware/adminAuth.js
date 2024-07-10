@@ -3,7 +3,8 @@ import "dotenv/config";
 import UserModel from "../models/userModel.js";
 
 const authenticateAdmin = async (req, res, next) => {
-  const token = req.cookies.token;
+  // const token = req.cookies.token;
+  const token = req.headers.authorization;
  
   if (!token) {
     return res.sendStatus(401);
