@@ -5,6 +5,6 @@ import userAuth from "../middleware/userAuth.js"
 const cartRoute  = express.Router()
 
 cartRoute.post("/addtocart",userAuth,addToCart)
-cartRoute.get("/allcartitems",getAllCartItems)
+cartRoute.get("/allcartitems",userAuth,getAllCartItems)
 
 export default cartRoute 

@@ -127,12 +127,13 @@ const removeItemFromCart = async (req, res) => {
 };
 
 const getAllCartItems = async (req, res) => {
-  // const {id} =req.body
-  const id = "666feb23662d6ee9a87f7664";
+  console.log("hittinh");
+  const userId = req.user.id
+  console.log(userId);
 
   try {
     const cart = await CartModel.find({
-      userId: id,
+     _id:userId
     }).populate({
       path: "items.productId",
       model: "menu",
