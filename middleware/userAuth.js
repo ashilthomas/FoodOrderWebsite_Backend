@@ -2,11 +2,12 @@ import jwt from "jsonwebtoken";
 import "dotenv/config";
 
 function authenticateUser(req, res, next) {
-  // console.log("token",token);
-
+ 
   // const token = req.cookies.token;
 
   const token = req.headers.authorization;
+  
+  
 
   
  

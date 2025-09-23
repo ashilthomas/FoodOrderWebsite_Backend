@@ -12,6 +12,7 @@ const addFoodMenuItems = async (req, res) => {
     }
 
     cloudinaryInstance.uploader.upload(req.file.path, async (err, result) => {
+      
       if (err) {
         console.log(err, "error");
         return res.status(500).json({
@@ -21,9 +22,11 @@ const addFoodMenuItems = async (req, res) => {
       }
 
       const imageUrl = result.url;
+
       const { title, description, price, category, brand, restaurant, availability,customization} =
         req.body;
        
+   console.log(req.body);
    
 
 

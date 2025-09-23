@@ -29,10 +29,7 @@ const placeOrder = async (req, res) => {
 };
 
 const verifyOrder = async (req, res) => {
-  const userId = req.user.id
- 
-
-
+  const userId = req.user.id;
 
   const {
     razorpay_order_id,
@@ -71,7 +68,6 @@ const verifyOrder = async (req, res) => {
       });
     }
 
-    
     var mailOptions = {
       from: process.env.EMAIL_USER,
       to: email.email,
@@ -84,9 +80,8 @@ Order Number: ${razorpay_order_id}
 Order Date: ${new Date().toLocaleDateString()}
 
     
-`}
-
-   
+`,
+    };
 
     transporter.sendMail(mailOptions, function (error, info) {
       if (error) {
@@ -102,7 +97,7 @@ Order Date: ${new Date().toLocaleDateString()}
 };
 
 const allOrderItems = async (req, res) => {
-  const userId = req.user.id
+  const userId = req.user.id;
 
   try {
     // const orderItems = await OrderModel.find({user:userId}).populate('orderItems.cart')
@@ -110,11 +105,13 @@ const allOrderItems = async (req, res) => {
     //   path: 'orderItems.cart',
     //   select: 'items.productId'
     // });
-    const orderItems = await OrderModel.find({ user: userId }).populate({
+    const orderItems = await OrderModel.find({
+      user: userId,
+    }).populate({
       path: "orderItems.cart",
       populate: {
-        path: "items.productId", 
-        model: "menu", 
+        path: "items.productId",
+        model: "menu",
       },
     });
 
@@ -126,15 +123,12 @@ const allOrderItems = async (req, res) => {
 const deleteOrder = async (req, res) => {
   const { orderId, productId } = req.body;
 
-
   try {
-   
     const order = await OrderModel.findById(orderId);
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
 
-  
     const cartId = order.orderItems[0]?.cart;
 
     const cart = await CartModel.findById(cartId);
@@ -144,12 +138,10 @@ const deleteOrder = async (req, res) => {
         .json({ success: false, message: "Cart not found" });
     }
 
- 
     cart.items = cart.items.filter(
       (item) => item.productId.toString() !== productId
     );
 
-    
     cart.totalPrice = cart.items.reduce((total, item) => total + item.price, 0);
     cart.totalCount = cart.items.length;
 
@@ -165,6 +157,5 @@ const deleteOrder = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error", error });
   }
 };
-
 
 export { placeOrder, verifyOrder, allOrderItems, deleteOrder };

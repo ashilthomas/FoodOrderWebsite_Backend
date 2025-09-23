@@ -44,6 +44,7 @@ const addUser = async (req, res,next) => {
     
 
     getToken(req,res,next)
+    
     res.status(200).json({
       success: true,
       message: "Successfully created account",
@@ -75,6 +76,9 @@ const loginUser = async (req, res,next) => {
     const user = await UserModel.findOne({ email });
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
+    }
+    if(!user.isActive){
+      return res.json({ success: false, message: "User is deactivated" });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
@@ -121,9 +125,11 @@ const admin =async(req,res)=>{
 
 
 const checkuser = async(req,res)=>{
+  
+  
  
   const userId = req.user.id
-  console.log(userId);
+
 
 
   try {
@@ -140,6 +146,53 @@ const checkuser = async(req,res)=>{
     res.json({ message: "authentication failed", success: false })
    }
 }
+const userList =(req,res)=>{
+  UserModel.find().then((users)=>{
+    res.json({
+      success:true,
+      users
+    })
+  }
 
-export { addUser,loginUser,admin,checkuser };
+  ).catch((error)=>{
+    res.status(500).json({
+      success:false,
+      message:"internal server error"
+    })
+  }
+  )
+}
+const userActive = async(req,res)=>{
+  console.log("hitting user active");
+  
+  const userId = req.params.id;
+  try {
+        await UserModel.findByIdAndUpdate(userId , { isActive: true }, { new: true });
+    res.json({ success: true, message: "User deactivated successfully" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success:false,
+      message:"internal server error"
+    })
+    
+  }
+}
+const userDeactive = async(req,res)=>{
+   console.log("hitting user deactive");
+  const userId = req.params.id;
+  try {
+        await UserModel.findByIdAndUpdate(userId , { isActive: false }, { new: true });
+    res.json({ success: true, message: "User deactivated successfully" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({  
+      success:false,
+      message:"internal server error"
+    })
+    
+  }
+}
+  
+export { addUser,loginUser,admin,checkuser ,userList,userActive,userDeactive};
 
