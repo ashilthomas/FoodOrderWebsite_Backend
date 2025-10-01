@@ -19,7 +19,7 @@ function authenticateUser(req, res, next) {
     //   message:"Unauthorized"
     // })
   }
-  console.log("JWT Secret", process.env.SKT);
+ 
 
   jwt.verify(token, process.env.SKT, (err, user) => {
     

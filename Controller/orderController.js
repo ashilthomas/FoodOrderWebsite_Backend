@@ -29,6 +29,8 @@ const placeOrder = async (req, res) => {
 };
 
 const verifyOrder = async (req, res) => {
+  console.log("hitting verify order");
+  
   const userId = req.user.id;
 
   const {
