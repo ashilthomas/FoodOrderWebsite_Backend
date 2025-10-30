@@ -5,7 +5,7 @@ function authenticateUser(req, res, next) {
  
   // const token = req.cookies.token;
 
-  const token = req.headers.authorization;
+  const token = req.headers.authorization?.split(' ')[1];
   
   
 

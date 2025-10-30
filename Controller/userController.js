@@ -60,7 +60,6 @@ const addUser = async (req, res,next) => {
 };
 
 const loginUser = async (req, res,next) => {
-  console.log("hitting login");
 
   const { password, email } = req.body;
 
@@ -87,13 +86,10 @@ const loginUser = async (req, res,next) => {
     }
 
     req.user = user
-    
+
 
     getToken(req,res,next)
 
-  
-
-    
   } catch (error) {
     console.error(error); // Log error for debugging
     res.status(500).json({
@@ -102,7 +98,6 @@ const loginUser = async (req, res,next) => {
     });
   }
 };
-
 const admin =async(req,res)=>{
   const adminId = req.user.id
        try {
@@ -152,47 +147,42 @@ const userList =(req,res)=>{
       success:true,
       users
     })
-  }
-
-  ).catch((error)=>{
+  }).catch((error)=>{
     res.status(500).json({
       success:false,
       message:"internal server error"
     })
-  }
-  )
+  })
 }
 const userActive = async(req,res)=>{
-  console.log("hitting user active");
-  
+
   const userId = req.params.id;
   try {
         await UserModel.findByIdAndUpdate(userId , { isActive: true }, { new: true });
-    res.json({ success: true, message: "User deactivated successfully" });
+    res.json({ success: true, message: "User activated successfully" });
   } catch (error) {
     console.log(error);
     res.status(500).json({
       success:false,
       message:"internal server error"
     })
-    
+
   }
 }
 const userDeactive = async(req,res)=>{
-   console.log("hitting user deactive");
-  const userId = req.params.id;
-  try {
-        await UserModel.findByIdAndUpdate(userId , { isActive: false }, { new: true });
-    res.json({ success: true, message: "User deactivated successfully" });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({  
-      success:false,
-      message:"internal server error"
-    })
-    
-  }
-}
+   const userId = req.params.id;
+   try {
+         await UserModel.findByIdAndUpdate(userId , { isActive: false }, { new: true });
+     res.json({ success: true, message: "User deactivated successfully" });
+   } catch (error) {
+     console.log(error);
+     res.status(500).json({
+       success:false,
+       message:"internal server error"
+     })
+
+   }
+ }
   
 export { addUser,loginUser,admin,checkuser ,userList,userActive,userDeactive};
 

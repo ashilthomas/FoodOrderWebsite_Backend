@@ -24,16 +24,12 @@ const getToken = (req, res, next) => {
 
         const token = jwt.sign(options, process.env.SKT, { expiresIn: "30m" });
 
-        res.status(200)
-            .cookie("token", token,{
-             
-            })
-            .json({
-                success: true,
-                user: req.user,
-                token,
-                message: "Logged in successfully",
-            });
+        res.status(200).json({
+            success: true,
+            user: req.user,
+            token,
+            message: "Logged in successfully",
+        });
     } catch (error) {
         res.status(500).json({
             success: false,
