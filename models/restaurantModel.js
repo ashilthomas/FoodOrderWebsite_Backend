@@ -4,9 +4,9 @@ const restaurentSchema = new Schema({
     title: { type: String, required: true },
     cuisinetype: { type: String, required: true },
     rating: { type: Number, required: true },
-    openinghours: { type: Number, default: true },
+    openinghours: { type: String, required: true },
     location: { type: String, required: true },
-    restaurantimg:{type:String,require:true}
+    restaurantimg:{type:String,required:true}
    
     
  });

@@ -79,13 +79,12 @@ const getAllRestaurants = async(req,res)=>{
 }
 const singleRestaurant = async(req,res)=>{
     const {id}=req.body
-    console.log(id);
     try {
 
         const restaurant = await RestaurentModel.findOne({_id:id})
 
-        if(restaurant.length == 0){
-            res.json({
+        if(!restaurant){
+            return res.json({
                 success:false,
                 message:"no restaurant found"
             })

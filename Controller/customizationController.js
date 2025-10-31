@@ -2,7 +2,6 @@ import FoodCustomizationModel from "../models/customizationModel.js";
 
 const addFoodCustomization = async (req, res) => {
   const { sizeOptions, sauceOptions } = req.body;
-  console.log(req.body);
   try {
     const newCustomization = new FoodCustomizationModel({
       sizeOptions,
@@ -21,7 +20,6 @@ const addFoodCustomization = async (req, res) => {
       message: "internal server error",
     });
 
-    console.log(error);
   }
 };
 const getAllFoodCustomization = async(req,res)=>{
@@ -39,7 +37,10 @@ const getAllFoodCustomization = async(req,res)=>{
       foodCustomization
     })
   } catch (error) {
-    
+    res.status(500).json({
+      success: false,
+      message: "internal server error",
+    });
   }
 }
 export {

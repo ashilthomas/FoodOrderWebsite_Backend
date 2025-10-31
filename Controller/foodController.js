@@ -1,5 +1,4 @@
 
-import { log } from "console";
 import { cloudinaryInstance } from "../Config/cloudinary.js";
 import MenuModel from "../models/foodModel.js";
 import fs from "fs";
@@ -26,7 +25,6 @@ const addFoodMenuItems = async (req, res) => {
       const { title, description, price, category, brand, restaurant, availability,customization} =
         req.body;
        
-   console.log(req.body);
    
 
 
@@ -108,7 +106,6 @@ const deletMenuItems = async (req, res) => {
         if (err) {
           console.error("Error deleting file:", err);
         } else {
-          console.log("File deleted successfully");
         }
 
         await MenuModel.findByIdAndDelete(id);
@@ -167,61 +164,53 @@ const searchMenuItems = async (req, res) => {
  
   const menuItemCategory = async(req,res)=>{
     try {
-        const allMenuItems = await ProductModel.find({});
-    
-     
+        const allMenuItems = await MenuModel.find({});
+
+
         const categories = Array.from(new Set(allMenuItems.map(items => items.category)));
-    
+
         if (categories.length === 0) {
           return res.status(404).json({ success: false, message: "No categories available" });
         }
-    
+
         res.status(200).json({ success: true, categories });
     } catch (error) {
         console.log(error);
-        res.json("internal server error")
+        res.status(500).json({ success: false, message: "internal server error" })
     }
   }
 
   const itemFilter = async (req, res) => {
     try {
       const { price, sort, cuisinetype } = req.query;
-  
+
       // Build the query object
       let query = {};
-     
-      if (price) {
-        query.price = { $lte: price };
+
+      if (price && price !== 'all') {
+        query.price = { $lte: parseInt(price) };
       }
-      if(cuisinetype){
-          
-      }
-    
+
       let menuItems = await MenuModel.find(query).populate('restaurant');
-  
-     
-      if (menuItems.length === 0) {
-        return res.json({ error: "No items found" });
+
+      // Don't return early if no items found, continue with filtering
+
+      if (cuisinetype && cuisinetype !== 'all') {
+        menuItems = menuItems.filter(item => item.restaurant && item.restaurant.cuisinetype === cuisinetype);
       }
-      if (cuisinetype) {
-        menuItems = menuItems.filter(item => item.restaurant.cuisinetype === cuisinetype);
-      }
-  
-      // Optionally filter by rating if provided
-  
+
       // Sort the items if sort parameter is provided
       if (sort === 'rating') {
-        menuItems = menuItems.sort((a, b) => b.restaurant.rating - a.restaurant.rating);
+        menuItems = menuItems.sort((a, b) => (b.restaurant?.rating || 0) - (a.restaurant?.rating || 0));
       } else if (sort === 'price') {
         menuItems = menuItems.sort((a, b) => a.price - b.price);
       }
-     
-  
+
       // Return the filtered and possibly sorted items
-      res.json(menuItems);
+      res.json({ success: true, menuItems });
     } catch (error) {
       // Return the error message
-      res.status(500).json({ error: error.message });
+      res.status(500).json({ success: false, message: error.message });
     }
   };
   
@@ -241,9 +230,8 @@ const searchMenuItems = async (req, res) => {
     }
   };
   const getCategoryItems = async (req, res) => {
-    const { category } = req.body;
-    console.log(category);
-  
+    const { category } = req.query;
+
     try {
       const items = await MenuModel.find({ category: category }).populate("restaurant")
       if(items.length==0){
@@ -264,48 +252,44 @@ const searchMenuItems = async (req, res) => {
     }
   };
   const restaurantItems = async(req,res)=>{
-    const {id}=req.body
-   
-    
+    const {id}=req.query
+
+
        try {
 
-      // const restaurantItem = await MenuModel.find().
-      //   populate({ path: 'restaurant', select:id }).populate("restaurant")
+     const restaurantItem = await MenuModel.find({
+       restaurant:id}).populate("restaurant")
 
-      const restaurantItem = await MenuModel.find({
-        restaurant:id}).populate("restaurant")
-
-        if(restaurantItem.length == 0){
-          return res.json({
-            success:true,
-            message:"no restaurant found"
-          })
-        }
-
-
-        res.json({
-          success:true,
-          restaurantItem
-        })
-        
-       } catch (error) {
-        console.log(error);
-        res.status(404).json({
-          success:false,
-          message:"internal server error"
-        })
+       if(restaurantItem.length == 0){
+         return res.json({
+           success:false,
+           message:"no restaurant items found"
+         })
        }
+
+
+       res.json({
+         success:true,
+         restaurantItem
+       })
+
+       } catch (error) {
+       console.log(error);
+       res.status(500).json({
+         success:false,
+         message:"internal server error"
+       })
+      }
   }
 
   const singleMenuItems = async(req,res)=>{
-    const {id}=req.body
-    console.log("single",id);
-    try {   
-      
+    const {id}=req.query
+    try {
+
       const menuItem = await MenuModel.findOne({_id:id}).populate("customization")
       if(!menuItem){
         return res.json({
-          succes:false,
+          success:false,
           message:"no items found"
         })
       }
@@ -313,14 +297,14 @@ const searchMenuItems = async (req, res) => {
         success:true,
         menuItem
       })
-     
+
     } catch (error) {
-      res.json({
-        succes:false,
+      res.status(500).json({
+        success:false,
         message:"Internal server error"
       })
       console.log(error);
-      
+
     }
   }
   
@@ -336,3 +320,4 @@ export {
   restaurantItems,
   singleMenuItems
 };
+

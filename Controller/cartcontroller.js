@@ -14,7 +14,6 @@ const addToCart = async (req, res) => {
 
     const getProductBasePrice = async (productId) => {
       const product = await MenuModel.findOne({ _id: productId });
-      console.log("Product:", product);
       return product ? product.price : 0;
     };
 
@@ -48,7 +47,7 @@ const addToCart = async (req, res) => {
       }
 
       cart.totalPrice += itemTotalPrice;
-      cart.totalItemCount = cart.items.length;
+      cart.totalCount = cart.items.length;
       cart = await cart.save();
       return res.status(201).json({ success: true, message: "updated", cart });
     } else {

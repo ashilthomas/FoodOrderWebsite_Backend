@@ -71,11 +71,10 @@ const coupanValidate = async(req,res)=>{
    
     try {
         const coupon = await CouponModel.findOne({code:code });
-        console.log(coupon);
         if (!coupon){
-            return res.send({
+            return res.json({
                 success:false,
-                message:"'Invalid coupon code'"
+                message:"Invalid coupon code"
             });
         }
         if (new Date(coupon.expirationDate) < new Date()) {

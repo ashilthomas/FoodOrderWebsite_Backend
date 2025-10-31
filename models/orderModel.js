@@ -11,8 +11,8 @@ const orderSchema = new Schema({
     address:{type:Object},
     deliveryStatus:{
         type: String,
-        enum: ["pending", "deliverd","canceled","shipped"],
-        default: "shipped",
+        enum: ["pending", "delivered","cancelled","shipped"],
+        default: "pending",
     },
     user: { type: mongoose.Schema.Types.ObjectId, ref: "user", required: true },
     orderItems: [orderItemSchema],

@@ -29,7 +29,6 @@ const placeOrder = async (req, res) => {
 };
 
 const verifyOrder = async (req, res) => {
-  console.log("hitting verify order");
   
   const userId = req.user.id;
 
@@ -66,7 +65,13 @@ const verifyOrder = async (req, res) => {
       // await CartModel.findByIdAndDelete(cartId);
 
       res.json({
-        message: "Payement Successfully",
+        message: "Payment Successfully",
+        success: true
+      });
+    } else {
+      res.status(400).json({
+        message: "Payment verification failed",
+        success: false
       });
     }
 
@@ -154,7 +159,7 @@ const deleteOrder = async (req, res) => {
       await OrderModel.findByIdAndDelete(orderId);
     }
 
-    res.status(200).json({ success: true, message: "order canceld", order });
+    res.status(200).json({ success: true, message: "order cancelled", order });
   } catch (error) {
     res.status(500).json({ success: false, message: "Server error", error });
   }
