@@ -67,7 +67,7 @@ const getallFoodMenuItems = async (req, res) => {
   try {
     const allMenus = await MenuModel.find({}).populate("restaurant");
 
-    if (!allMenus) {
+    if (!allMenus || allMenus.length === 0) {
       return res.json({
         success: false,
         message: "no items found",

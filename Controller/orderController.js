@@ -29,7 +29,7 @@ const placeOrder = async (req, res) => {
 };
 
 const verifyOrder = async (req, res) => {
-  
+
   const userId = req.user.id;
 
   const {
@@ -62,7 +62,8 @@ const verifyOrder = async (req, res) => {
 
       await payment.save();
 
-      // await CartModel.findByIdAndDelete(cartId);
+      // Clear the cart after successful order
+      await CartModel.findOneAndUpdate({ userId }, { items: [], totalPrice: 0, totalCount: 0 });
 
       res.json({
         message: "Payment Successfully",
@@ -78,15 +79,16 @@ const verifyOrder = async (req, res) => {
     var mailOptions = {
       from: process.env.EMAIL_USER,
       to: email.email,
-      subject: "conform order",
+      subject: "Confirm order",
+
       text: `Dear Customer,
 
-Thank you for your order We are delighted to prepare your delicious meal. 
+Thank you for your order. We are delighted to prepare your delicious meal.
 
 Order Number: ${razorpay_order_id}
 Order Date: ${new Date().toLocaleDateString()}
 
-    
+
 `,
     };
 
@@ -102,7 +104,6 @@ Order Date: ${new Date().toLocaleDateString()}
     console.log(error);
   }
 };
-
 const allOrderItems = async (req, res) => {
   const userId = req.user.id;
 
@@ -154,7 +155,6 @@ const deleteOrder = async (req, res) => {
 
     await cart.save();
 
-    await order.save();
     if (cart.items.length == 0) {
       await OrderModel.findByIdAndDelete(orderId);
     }

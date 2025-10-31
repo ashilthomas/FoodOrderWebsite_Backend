@@ -56,7 +56,7 @@ const addToCart = async (req, res) => {
         userId,
         items: [{ productId, quantity, customization, price: itemTotalPrice }],
         totalPrice: itemTotalPrice,
-        totalItemCount: 1
+        totalCount: 1
       });
 
       res.status(201).json({

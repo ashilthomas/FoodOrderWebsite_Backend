@@ -77,7 +77,7 @@ const loginUser = async (req, res,next) => {
       return res.status(404).json({ success: false, message: "User not found" });
     }
     if(!user.isActive){
-      return res.json({ success: false, message: "User is deactivated" });
+      return res.status(403).json({ success: false, message: "User is deactivated" });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
@@ -86,7 +86,6 @@ const loginUser = async (req, res,next) => {
     }
 
     req.user = user
-
 
     getToken(req,res,next)
 

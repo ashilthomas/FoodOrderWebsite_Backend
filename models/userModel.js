@@ -29,6 +29,6 @@ const userSchema = new Schema({
       isActive: { type: Boolean, default: true },
       createdAt: { type: Date, default: Date.now },
 })
-const UserModel = mongoose.model.user || mongoose.model("user", userSchema);
+const UserModel = mongoose.models.user || mongoose.model("user", userSchema);
 
 export default UserModel;

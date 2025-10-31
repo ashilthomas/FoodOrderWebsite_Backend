@@ -19,7 +19,7 @@ const CartSchema = new Schema({
   userId: { type: Schema.Types.ObjectId, ref: 'user', required: true },
   items: [CartItemSchema],
   totalPrice: { type: Number, default: 0 },
-  totalCount:{type:Number, default: 0 }
+  totalCount: { type: Number, default: 0 }
 }, { timestamps: true });
 
 const CartModel = mongoose.models.Cart || mongoose.model("Cart", CartSchema);

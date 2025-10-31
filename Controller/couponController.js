@@ -43,10 +43,10 @@ const createCoupon = async(req,res)=>{
 
 const coupon = async(req,res)=>{
     try {
-        
+
         const coupon = await CouponModel.find({})
 
-        if(!coupon){
+        if(!coupon || coupon.length === 0){
             return res.json({
                 success:false,
                 message:"no coupon available"
@@ -66,9 +66,8 @@ const coupon = async(req,res)=>{
 }
 
 const coupanValidate = async(req,res)=>{
-    const { data } = req.body;
-   const code =data.coupon
-   
+    const { code } = req.body;
+
     try {
         const coupon = await CouponModel.findOne({code:code });
         if (!coupon){

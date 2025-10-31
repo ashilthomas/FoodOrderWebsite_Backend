@@ -26,7 +26,7 @@ const getAllFoodCustomization = async(req,res)=>{
   try {
     const foodCustomization = await FoodCustomizationModel.find({})
 
-    if(!foodCustomization){
+    if(!foodCustomization || foodCustomization.length === 0){
       return res.json({
         success:false,
         message:"no Customization available"

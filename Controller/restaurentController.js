@@ -60,7 +60,7 @@ const addRestaurent = async(req,res)=>{
 const getAllRestaurants = async(req,res)=>{
     try {
         const restaurant = await RestaurentModel.find({})
-        if(!restaurant){
+        if(!restaurant || restaurant.length === 0){
             return res.json({
                 success:false,
                 message:"no Restaurant found"
@@ -70,7 +70,7 @@ const getAllRestaurants = async(req,res)=>{
         res.status(200).json(restaurant)
     } catch (error) {
         console.log(error);
-             res.json({
+              res.json({
             success:false,
             message:"Internal server error"
         })
@@ -78,7 +78,7 @@ const getAllRestaurants = async(req,res)=>{
 
 }
 const singleRestaurant = async(req,res)=>{
-    const {id}=req.body
+    const {id}=req.query
     try {
 
         const restaurant = await RestaurentModel.findOne({_id:id})
@@ -93,13 +93,13 @@ const singleRestaurant = async(req,res)=>{
             success:true,
             restaurant
         })
-        
+
     } catch (error) {
         res.status(404).json({
             success:false,
-            message:"internal sever error"
+            message:"internal server error"
         })
-        
+
     }
 }
 

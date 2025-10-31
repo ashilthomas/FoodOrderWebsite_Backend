@@ -11,6 +11,6 @@ const restaurentSchema = new Schema({
     
  });
 
- const RestaurentModel = mongoose.model.restaurents || mongoose.model("restaurents", restaurentSchema);
+ const RestaurentModel = mongoose.models.restaurents || mongoose.model("restaurents", restaurentSchema);
 
 export default RestaurentModel;
