@@ -5,6 +5,6 @@ const restaurentRoute = express.Router()
 
 restaurentRoute.post("/addrestaurant",upload.single("restaurantimg"),addRestaurent)
 restaurentRoute.get("/allrestaurant",getAllRestaurants)
-restaurentRoute.post("/singlerestaurant",singleRestaurant)
+restaurentRoute.get("/singlerestaurant",singleRestaurant)
 
 export default restaurentRoute
