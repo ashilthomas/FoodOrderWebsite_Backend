@@ -103,4 +103,32 @@ const singleRestaurant = async(req,res)=>{
     }
 }
 
-export {addRestaurent,getAllRestaurants,singleRestaurant}
+const deleteRestaurant = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const restaurant = await RestaurentModel.findById(id);
+    if (!restaurant) {
+      return res.status(404).json({
+        success: false,
+        message: "Restaurant not found"
+      });
+    }
+
+    // Delete the restaurant
+    await RestaurentModel.findByIdAndDelete(id);
+
+    res.status(200).json({
+      success: true,
+      message: "Restaurant deleted successfully"
+    });
+  } catch (error) {
+    console.error("Delete restaurant error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    });
+  }
+};
+
+export {addRestaurent,getAllRestaurants,singleRestaurant,deleteRestaurant}
