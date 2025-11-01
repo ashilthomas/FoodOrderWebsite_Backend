@@ -36,6 +36,12 @@ const addToCart = async (req, res) => {
         productItem.customization = customization;
         productItem.price = itemTotalPrice;
         cart.items[itemIndex] = productItem;
+
+        // Recalculate total price for the entire cart
+        cart.totalPrice = cart.items.reduce((total, item) => total + item.price, 0);
+        cart.totalCount = cart.items.length;
+        cart = await cart.save();
+        return res.status(201).json({ success: true, message: "Item quantity updated in cart", cart });
       } else {
         // Item does not exist in the cart, add it
         cart.items.push({
@@ -44,12 +50,13 @@ const addToCart = async (req, res) => {
           customization,
           price: itemTotalPrice,
         });
-      }
 
-      cart.totalPrice += itemTotalPrice;
-      cart.totalCount = cart.items.length;
-      cart = await cart.save();
-      return res.status(201).json({ success: true, message: "updated", cart });
+        // Recalculate total price for the entire cart
+        cart.totalPrice = cart.items.reduce((total, item) => total + item.price, 0);
+        cart.totalCount = cart.items.length;
+        cart = await cart.save();
+        return res.status(201).json({ success: true, message: "Item added to cart successfully", cart });
+      }
     } else {
       // No cart for the user, create a new cart
       const newCart = await CartModel.create({
@@ -61,8 +68,8 @@ const addToCart = async (req, res) => {
 
       res.status(201).json({
         success: true,
-        message: "Added to cart",
-        newCart,
+        message: "Item added to cart successfully",
+        cart: newCart,
       });
     }
   } catch (error) {
