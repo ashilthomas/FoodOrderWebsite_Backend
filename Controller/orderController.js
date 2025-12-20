@@ -7,6 +7,8 @@ import CartModel from "../models/cartModel.js";
 import UserModel from "../models/userModel.js";
 
 const placeOrder = async (req, res) => {
+  
+  
   const { amount } = req.body;
 
   try {

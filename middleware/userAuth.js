@@ -4,8 +4,20 @@ import "dotenv/config";
 function authenticateUser(req, res, next) {
  
   // const token = req.cookies.token;
+  console.log("hitting token bar");
+  const authHeader = req.headers.authorization;
 
-  const token = req.headers.authorization?.split(' ')[1];
+if (!authHeader) {
+  return res.status(401).json({ message: "Token missing" });
+}
+
+const token = authHeader.split(" ")[1];
+  
+
+  // const token = req.headers.authorization?.split(' ')[1];
+
+  console.log(token);
+  
   
   
 
